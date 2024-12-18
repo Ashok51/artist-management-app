@@ -55,6 +55,8 @@ group :development, :test do
   # rubocop for formatting ruby code
   gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
+
+  gem 'pry'
 end
 
 group :development do
