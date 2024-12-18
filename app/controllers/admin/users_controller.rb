@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class UsersController < ApplicationController
     before_action :set_user, only: %i[edit update destroy]
@@ -22,8 +24,7 @@ module Admin
       end
     end
 
-    def edit
-    end
+    def edit; end
 
     def update
       if @user.update(user_params)
@@ -46,7 +47,7 @@ module Admin
 
     def user_params
       params.require(:user).permit(:first_name, :last_name, :phone, :date_of_birth, :gender, :address,
-                               :email, :role)
+                                   :email, :role)
     end
 
     def add_password_to_params

@@ -14,5 +14,5 @@ Rails.application.routes.draw do
   end
 
   # root path of an application
-  root to: "admin/users#index"
+  root to: 'admin/users#index'
 end
