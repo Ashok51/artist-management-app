@@ -55,6 +55,8 @@ group :development, :test do
   # rubocop for formatting ruby code
   gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
+
+  gem 'pry'
 end
 
 group :development do
@@ -73,3 +75,8 @@ group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
 end
+
+gem "devise", "~> 4.9"
+
+gem "bootstrap"
+gem "sassc-rails"

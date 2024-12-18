@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h2 class="text-center">Sign up</h2>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+        <div class="row">
+          <div class="col-md-6">
+
+            <%= render 'shared/users_and_registrations/user_primary_info', resource_name: resource_name, f: f %>
+
+            <%= render 'shared/users_and_registrations/password_fields', resource_name: resource_name, f: f %>
+
+          </div>
+          <%= render 'shared/users_and_registrations/user_secondary_info', resource_name: resource_name, f: f %>
+        </div>
+
+        <div class="mb-3 text-center">
+          <%= f.submit "Sign up", class: "btn btn-primary btn-lg" %>
+        </div>
+      <% end %>
+      <div class="mb-3 text-center">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>
