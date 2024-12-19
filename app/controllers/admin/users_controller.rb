@@ -3,9 +3,11 @@
 module Admin
   class UsersController < ApplicationController
     before_action :set_user, only: %i[edit update destroy]
+    # after_action :verify_policy_scoped, only: :index
 
     def index
       @users = User.all
+      authorize @users
     end
 
     def new
