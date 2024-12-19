@@ -1,1 +1,43 @@
-<p> hello from index </p>
+<div class="container">
+  <h3 class="float-start">All Users</h3>
+  <%= link_to "Add User", new_admin_user_path, class: "btn btn-primary float-end me-2" %>
+
+  <% if @users.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>role</th>
+          <th>Date of Birth</th>
+          <th>Gender</th>
+          <th>Address</th>
+          <th>phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%=  user.first_name + "" + user.last_name %></td>
+            <td><%= user.role %></td>
+            <td><%= user&.date_of_birth&.strftime('%Y-%m-%d') %></td>
+            <td><%= user.gender %></td>
+            <td><%= user.address %></td>
+            <td><%= user.phone %></td>
+            <td>
+              <%= link_to "Edit", edit_admin_user_path(user), class: "btn btn-secondary btn-sm" %>
+              <%= button_to "Delete", admin_user_path(user), method: :delete,
+                             form: { data: { turbo_confirm: "Are you really want to delete #{user.first_name}?" } }, class: "btn btn-danger btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+
+  <% else %>
+    <div class="container">
+      <p>No users found. But you can Add by clicking Add New User button.</p>
+    </div>
+  <% end %>
+</div>
