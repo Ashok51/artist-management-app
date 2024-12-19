@@ -12,4 +12,8 @@ class User < ApplicationRecord
   enum gender: { male: 1, female: 2, other: 3 }
 
   enum role: { super_admin: 0, artist_manager: 1, artist: 2 }
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
 end
