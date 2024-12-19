@@ -13,7 +13,9 @@ Rails.application.routes.draw do
     resources :users
   end
 
-  resources :artists
+  resources :artists do
+    resources :musics, only: [:index, :create, :show, :update, :destroy]
+  end
 
   # root path of an application
   root to: 'admin/users#index'

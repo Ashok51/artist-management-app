@@ -1,0 +1,41 @@
+<div class="container">
+  <h3 class="float-start">All Artists</h3>
+  <%= link_to "Add Artist", new_artist_path, class: "btn btn-primary float-end me-2" %>
+  <% if @artists.present? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date of Birth</th>
+          <th>Gender</th>
+          <th>Address</th>
+          <th>First Released Year</th>
+          <th>No. of Albums Released</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @artists.each do |artist| %>
+          <tr>
+            <td><%= link_to artist.full_name, artist_path(artist) %></td>
+            <td><%= artist&.date_of_birth&.strftime('%Y-%m-%d') %></td>
+            <td><%= artist.gender %></td>
+            <td><%= artist.address %></td>
+            <td><%= artist.first_released_year %></td>
+            <td><%= artist.no_of_albums_released %></td>
+            <td>
+              <%= link_to "Edit", edit_artist_path(artist), class: "btn btn-secondary btn-sm" %>
+              <%= button_to "Delete", artist_path(artist), method: :delete,
+                             form: { data: { turbo_confirm: "Are you really want to delete #{artist.full_name} with his musics?" } }, class: "btn btn-danger btn-sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  <% else %>
+    <div class="container">
+      <p>No artists found. But you can Add by clicking Add Artist button.</p>
+    </div>
+  <% end %>
+</div>
