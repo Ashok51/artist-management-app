@@ -8,19 +8,29 @@ class UserPolicy < ApplicationPolicy
     @record = record
   end
 
-  def index?
+  def create?
     user.super_admin?
   end
 
-  def create?
-    index?
+  def edit?
+    create?
   end
 
   def update?
-    index?
+    create?
   end
 
   def destroy?
-    index?
+    create?
+  end
+
+  class Scope < Scope
+    def resolve
+      if user.super_admin?
+        scope.all
+      else
+        scope.none
+      end
+    end
   end
 end

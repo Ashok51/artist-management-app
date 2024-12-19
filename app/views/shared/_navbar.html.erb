@@ -7,12 +7,16 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       <% if user_signed_in? %>
+        <% if current_user.super_admin? %>
           <li class="nav-item">
             <%= link_to "Users", root_path, class: "nav-link" %>
           </li>
+        <% end %>
+        <% if current_user.super_admin? || current_user.artist_manager? %>
           <li class="nav-item">
             <%= link_to "Artists", root_path, class: "nav-link" %>
           </li>
+        <% end %>
       <% end %>
       </ul>
       <ul class="navbar-nav">
