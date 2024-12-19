@@ -4,6 +4,10 @@ class ArtistsController < ApplicationController
     authorize @artists
   end
 
+  def new
+    @artist = Artist.new
+  end
+
   def show
   end
 
