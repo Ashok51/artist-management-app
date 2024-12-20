@@ -1,0 +1,15 @@
+<div class="container">
+  <h4 class="mb-4">Edit Artist</h4>
+  <%= form_with(model: @artist,
+    data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper'}) do |form| %>
+
+    <%= render "artists/artist_and_music_fields", form: form %>
+
+    <div class="row mb-3">
+      <div class="col-md-10 offset-md-2">
+        <%= form.submit "Update Artist & Music", class: "btn btn-primary btn-sm" %>
+      </div>
+    </div>
+
+  <% end %>
+</div>

@@ -10,4 +10,8 @@ module ApplicationHelper
   def humanized_gender_names
     User.genders.keys.map { |gender| [gender.capitalize, gender] }
   end
+
+  def humanized_genre_names
+    Music.genres.keys.map { |g| [g.humanize, g] }
+  end
 end

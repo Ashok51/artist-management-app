@@ -1,0 +1,63 @@
+    <% if @artist.errors.any? %>
+      <div class="alert alert-danger">
+        <h4 class="alert-heading">Oops! There were some errors:</h4>
+        <ul>
+          <% @artist.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Artist Fields -->
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <%= form.label :full_name, class: 'form-label' %>
+        <%= form.text_field :full_name, class: 'form-control form-control-sm', required: true, placeholder: 'Enter full name' %>
+        <div class="invalid-feedback">Please provide a full name.</div>
+      </div>
+
+      <div class="col-md-4">
+        <%= form.label :date_of_birth, class: 'form-label' %>
+        <%= form.date_field :date_of_birth, class: 'form-control form-control-sm', required: true, placeholder: 'YYYY-MM-DD', max: Date.today.to_s %>
+        <div class="invalid-feedback">Please provide a valid date of birth.</div>
+      </div>
+
+      <div class="col md-3">
+        <%= form.label :gender, class: "form-label" %>
+        <%= form.select :gender, humanized_gender_names, { prompt: 'Select Gender' }, class: "form-select form-select-sm", required: true %>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <%= form.label :first_released_year, class: 'form-label' %>
+        <%= form.number_field :first_released_year, class: 'form-control form-control-sm', placeholder: 'Enter first released year' %>
+        <div class="invalid-feedback">Please provide a valid year.</div>
+      </div>
+
+      <div class="col-md-4">
+        <%= form.label :address, class: 'form-label' %>
+        <%= form.text_area :address, class: 'form-control form-control-sm', required: true, placeholder: 'Enter address' %>
+        <div class="invalid-feedback">Please provide an address.</div>
+      </div>
+    </div>
+    <hr>
+
+    <h4 class="mt-4 mb-3">Artist Music</h4>
+
+    <!-- Template for new records -->
+    <template data-nested-form-target="template">
+      <%= form.fields_for :musics, Music.new, child_index: 'NEW_RECORD' do |music_fields| %>
+        <%= render "music_form_fields", f: music_fields %>
+      <% end %>
+    </template>
+
+    <!-- Existing records -->
+    <%= form.fields_for :musics do |music_fields| %>
+      <%= render "music_form_fields", f: music_fields %>
+    <% end %>
+
+    <div data-nested-form-target="target"></div>
+
+    <button type="button" class="btn btn-secondary btn-sm" data-action="nested-form#add">Add Music</button>
