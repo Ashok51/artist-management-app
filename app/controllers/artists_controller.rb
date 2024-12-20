@@ -3,7 +3,7 @@
 class ArtistsController < ApplicationController
   before_action :set_artist, only: %i[show edit update destroy]
   def index
-    @artists = Artist.all
+    @artists = Artist.page(params[:page])
     authorize @artists
   end
 
