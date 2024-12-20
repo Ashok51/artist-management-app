@@ -1,2 +1,57 @@
-<h1>Artists#show</h1>
-<p>Find me in app/views/artists/show.html.erb</p>
+<div class="container mt-4">
+  <h3>Artist Details</h3>
+
+  <table class="table table-bordered">
+    <tbody>
+      <tr>
+        <th>Full Name</th>
+        <td><%= @artist.full_name %></td>
+      </tr>
+      <tr>
+        <th>Date of Birth</th>
+        <td><%= @artist.date_of_birth %></td>
+      </tr>
+      <tr>
+        <th>Gender</th>
+        <td><%= @artist.gender %></td>
+      </tr>
+      <tr>
+        <th>Address</th>
+        <td><%= @artist.address %></td>
+      </tr>
+      <tr>
+        <th>First Released Year</th>
+        <td><%= @artist.first_released_year %></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4 class="mt-4">Associated Musics</h4>
+
+  <% if @artist.musics.any? %>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Album Name</th>
+          <th>Genre</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @artist.musics.each do |music| %>
+          <tr>
+            <td><%= music.title %></td>
+            <td><%= music.album_name %></td>
+            <td><%= music.genre %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-muted">No music records associated with this artist.</p>
+  <% end %>
+
+  <div class="mt-3">
+    <%= link_to 'Back to Artists', artists_path, class: 'btn btn-secondary btn-sm' %>
+  </div>
+</div>
