@@ -15,7 +15,9 @@ class ArtistsController < ApplicationController
     @artist.musics.build
   end
 
-  def show; end
+  def show
+    authorize @artist
+  end
 
   def create
     @artist = Artist.new(artist_params)
