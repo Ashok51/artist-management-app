@@ -82,3 +82,6 @@ gem 'bootstrap'
 gem 'sassc-rails'
 
 gem 'pundit', '~> 2.4'
+
+gem 'kaminari'  #for paginante
+
