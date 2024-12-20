@@ -1,6 +1,8 @@
 <div class="container">
   <h3 class="float-start">All Artists</h3>
-  <%= link_to "Add Artist", new_artist_path, class: "btn btn-primary float-end me-2" %>
+  <% if current_user.artist_manager? %>
+    <%= link_to "Add Artist", new_artist_path, class: "btn btn-primary float-end me-2" %>
+  <% end %>
   <% if @artists.present? %>
     <table class="table">
       <thead>
@@ -11,7 +13,9 @@
           <th>Address</th>
           <th>First Released Year</th>
           <th>No. of Albums Released</th>
-          <th>Actions</th>
+          <% if current_user.artist_manager? %>
+            <th>Actions</th>
+          <% end %>
         </tr>
       </thead>
       <tbody>
@@ -23,11 +27,13 @@
             <td><%= artist.address %></td>
             <td><%= artist.first_released_year %></td>
             <td><%= artist.no_of_albums_released %></td>
-            <td>
-              <%= link_to "Edit", edit_artist_path(artist), class: "btn btn-secondary btn-sm" %>
-              <%= button_to "Delete", artist_path(artist), method: :delete,
-                             form: { data: { turbo_confirm: "Are you really want to delete #{artist.full_name} with his musics?" } }, class: "btn btn-danger btn-sm" %>
-            </td>
+            <% if current_user.artist_manager? %>
+              <td>
+                <%= link_to "Edit", edit_artist_path(artist), class: "btn btn-secondary btn-sm" %>
+                <%= button_to "Delete", artist_path(artist), method: :delete,
+                              form: { data: { turbo_confirm: "Are you really want to delete #{artist.full_name} with his musics?" } }, class: "btn btn-danger btn-sm" %>
+              </td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>
