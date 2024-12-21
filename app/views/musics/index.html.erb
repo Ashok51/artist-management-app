@@ -1,0 +1,44 @@
+
+<div class="container">
+  <h3 class="float-start">My Musics</h3>
+  <%= link_to "Add Music", new_music_path, class: "btn btn-primary float-end me-2" %>
+
+  <div class="row">
+    <div class="col-md-10 mx-auto">
+      <% if @musics.present? %>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Album Name</th>
+              <th>Genre</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @musics.each do |music| %>
+              <tr>
+                <td><%= music.title %></td>
+                <td><%= music.album_name %></td>
+                <td><%= music.genre %></td>
+                <td>
+                  <%= link_to 'Edit', edit_music_path(music), class: 'btn btn-primary btn-sm' %>
+
+                  <%= button_to "Delete", music_path(music), method: :delete,
+                                form: { data: { turbo_confirm: "Are you really want to delete this music?" } }, class: "btn btn-danger btn-sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="row">
+          <div class="col-md-10 offset-4">
+            <p>You have no musics yet.</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
