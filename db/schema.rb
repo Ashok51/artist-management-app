@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_19_091436) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_21_033832) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,10 +19,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_19_091436) do
     t.date "date_of_birth", null: false
     t.string "gender", null: false
     t.text "address", null: false
-    t.integer "first_released_year", null: false
+    t.integer "first_released_year"
     t.integer "no_of_albums_released"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_artists_on_user_id"
   end
 
   create_table "musics", force: :cascade do |t|
@@ -55,5 +57,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_19_091436) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  add_foreign_key "artists", "users"
   add_foreign_key "musics", "artists"
 end
