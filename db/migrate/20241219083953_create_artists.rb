@@ -8,7 +8,7 @@ class CreateArtists < ActiveRecord::Migration[7.1]
       t.date :date_of_birth, null: false
       t.string :gender, null: false
       t.text :address, null: false
-      t.integer :first_released_year, null: false
+      t.integer :first_released_year
       t.integer :no_of_albums_released
 
       t.timestamps
