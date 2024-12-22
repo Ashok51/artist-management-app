@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CsvExportService
-  require 'csv'
 
   def self.export_artists_and_musics
     artists = Artist.includes(:musics).all
