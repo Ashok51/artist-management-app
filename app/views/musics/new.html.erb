@@ -1,0 +1,12 @@
+<div id="music-forms-container" class="mx-5">
+  <%= form_with(model: @music, local: true) do |f| %>
+
+    <%= render 'music_fields', f: f %>
+
+    <div class="music-form row mb-3 justify-content-center">
+      <div class="col-md-5 offset-md-5">
+        <%= f.submit "Save Music", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>
