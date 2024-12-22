@@ -1,9 +1,36 @@
 <div class="container">
   <h3 class="float-start">All Artists</h3>
-  <% if current_user.artist_manager? %>
-    <%= link_to "Add Artist", new_artist_path, class: "btn btn-primary float-end me-2" %>
-  <% end %>
-  <% if @artists.present? %>
+  <%= link_to "Add Artist", new_artist_path, class: "btn btn-primary float-end me-2" %>
+
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-2">
+      <% if @artists.any? %>
+        <%= link_to export_artists_path(format: :csv), class: "btn btn-success float-end" do %>
+          <i class="bi bi-download"></i> Export
+        <% end %>
+      <% end %>
+    </div>
+    <div class="col-md-6">
+      <%= form_tag import_artists_path, multipart: true do %>
+        <div class="input-group">
+          <%= file_field_tag :file, class: "form-control", id: "inputFile", accept: ".csv" %>
+          <button type="submit" class="btn btn-primary">Import CSV</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-md-8"></div>
+    <div class="col-md-4">
+      <div class="float-md-end me-2">
+       
+      </div>
+    </div>
+  </div>
+
+  <% if @artists.any? %>
     <table class="table">
       <thead>
         <tr>
@@ -13,9 +40,7 @@
           <th>Address</th>
           <th>First Released Year</th>
           <th>No. of Albums Released</th>
-          <% if current_user.artist_manager? %>
-            <th>Actions</th>
-          <% end %>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -27,23 +52,19 @@
             <td><%= artist.address %></td>
             <td><%= artist.first_released_year %></td>
             <td><%= artist.no_of_albums_released %></td>
-            <% if current_user.artist_manager? %>
-              <td>
-                <%= link_to "Edit", edit_artist_path(artist), class: "btn btn-secondary btn-sm" %>
-                <%= button_to "Delete", artist_path(artist), method: :delete,
-                              form: { data: { turbo_confirm: "Are you really want to delete #{artist.full_name} with his musics?" } }, class: "btn btn-danger btn-sm" %>
-              </td>
-            <% end %>
+            <td>
+              <%= link_to "Edit", edit_artist_path(artist), class: "btn btn-secondary btn-sm" %>
+              <%= button_to "Delete", artist_path(artist), method: :delete,
+                             form: { data: { turbo_confirm: "Are you really want to delete #{artist.full_name} with his musics?" } }, class: "btn btn-danger btn-sm" %>
+            </td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <%= paginate @artists %>
 
   <% else %>
-    <div class="container row">
-      <div class="col-md-10 offset-5"
-      <p>No artists found.</p>
+    <div class="container">
+      <p>No artists found. But you can Add by clicking Add Artist button.</p>
     </div>
   <% end %>
 </div>

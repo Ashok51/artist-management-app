@@ -4,13 +4,20 @@ Rails.application.routes.draw do
   # overriding the registrations controller
   devise_for :users, controllers: { registrations: 'registrations' }
 
-
   namespace :admin do
     resources :users
   end
 
+  # for csv import export
   resources :artists do
-    resources :musics, only: [:index, :create, :show, :update, :destroy]
+    collection do
+      get :export
+      post :import
+    end
+  end
+
+  resources :artists do
+    resources :musics, only: %i[index create show update destroy]
   end
 
   # Default root route for unauthenticated users

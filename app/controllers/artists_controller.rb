@@ -2,6 +2,10 @@
 
 class ArtistsController < ApplicationController
   before_action :set_artist, only: %i[show edit update destroy]
+  before_action :set_artist_for_export, only: %i[export]
+
+  require 'csv'
+
   def index
     @artists = Artist.page(params[:page])
     authorize @artists
@@ -56,6 +60,24 @@ class ArtistsController < ApplicationController
     end
   end
 
+  def export
+    csv_data = CsvExportService.export_artists_and_musics
+
+    send_data csv_data, filename: "artists_and_musics-#{Date.today}.csv", type: 'text/csv'
+  end
+
+  def import
+    file = params[:file]
+    begin
+      CsvImportService.import_artists_and_musics(file)
+      redirect_to artists_path, notice: 'Artists and Musics were successfully imported.'
+    rescue ArgumentError => e
+      redirect_to artists_path, alert: e.message
+    rescue StandardError => e
+      redirect_to artists_path, alert: "An error occurred: #{e.message}"
+    end
+  end
+
   private
 
   def artist_params
@@ -66,5 +88,9 @@ class ArtistsController < ApplicationController
 
   def set_artist
     @artist = Artist.find(params[:id])
+  end
+
+  def set_artist_for_export
+    @artists = Artist.includes(:musics).all
   end
 end
