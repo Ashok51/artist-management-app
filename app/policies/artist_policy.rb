@@ -27,10 +27,8 @@ class ArtistPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      if user.super_admin?
-        scope.all
-      elsif user.artist_manager?
-        scope.all # Artist managers can see all artists
+      if user.super_admin? || user.artist_manager
+        scope.all    # Artist managers and super admin  can see all artists
       else
         scope.none
       end

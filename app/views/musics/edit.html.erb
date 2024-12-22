@@ -1,1 +1,13 @@
-hello edit
+<div class="container">
+  <h4 class="mb-4">Edit Music</h4>
+  <%= form_with(model: @music, local: true) do |form| %>
+  
+    <%= render 'music_fields', f: form %>
+
+    <div class="music-form row mb-3 justify-content-center">
+      <div class="col-md-5 offset-md-5">
+        <%= form.submit "Update Music", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>
