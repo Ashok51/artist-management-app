@@ -16,4 +16,13 @@ class Artist < ApplicationRecord
   belongs_to :user, optional: true
 
   accepts_nested_attributes_for :musics, allow_destroy: true, reject_if: :all_blank
+
+  def self.build_artist_object_from_json(result)
+    artists = []
+    result.each do |artist|
+      artists << Artist.new(artist)
+    end
+
+    artists
+  end
 end
