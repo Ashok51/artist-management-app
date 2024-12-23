@@ -16,7 +16,7 @@ module SQLQueries
 
   ORDER_ARTIST_RECORD = <<-SQL
     SELECT * FROM artists
-    ORDER BY creted_at DESC
+    ORDER BY created_at DESC
   SQL
 
   CREATE_ARTIST_SQL = <<-SQL
