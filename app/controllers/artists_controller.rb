@@ -8,6 +8,8 @@ class ArtistsController < ApplicationController
   require 'csv'
   require_relative './concerns/sql_queries'
   include DatabaseExecution
+  include SQLQueries
+  include ArtistMusicSqlHandler
 
   def index
     per_page = 5
@@ -30,13 +32,18 @@ class ArtistsController < ApplicationController
   end
 
   def create
-    @artist = Artist.new(artist_params)
+    ActiveRecord::Base.transaction do
+      capitalize_artist_enum
 
-    authorize @artist
+      result = create_artist_record(artist_params)
 
-    if @artist.save!
-      redirect_to artists_path, notice: 'Artist was successfully created.'
-    else
+      artist_id = result.first['id']
+
+      create_artist_musics(artist_params[:musics_attributes], artist_id)
+
+      redirect_to artists_path, notice: 'Artist and their musics were successfully created.'
+    rescue StandardError => e
+      flash.now[:alert] = "Failed to create artist and their musics: #{e.message}"
       render :new
     end
   end
@@ -48,12 +55,12 @@ class ArtistsController < ApplicationController
   def update
     authorize @artist
 
-    if @artist.update(artist_params)
-      redirect_to artists_path, notice: 'artist was successfully updated.'
-    else
-      flash.now[:alert] = 'Failed to update the artist.'
-      render :edit
+    ActiveRecord::Base.transaction do
+      update_artist_and_music
     end
+    redirect_to artists_url, notice: 'Artist updated successfully.'
+  rescue ActiveRecord::StatementInvalid
+    flash[:alert] = 'Unable to update artist. Please try again.'
   end
 
   def destroy
@@ -95,6 +102,10 @@ class ArtistsController < ApplicationController
     params.require(:artist).permit(:date_of_birth, :gender, :full_name,
                                    :address, :first_released_year,
                                    musics_attributes: %i[id genre album_name title _destroy])
+  end
+
+  def capitalize_artist_enum
+    params[:artist][:gender] = artist_params[:gender]&.capitalize
   end
 
   def set_artist
