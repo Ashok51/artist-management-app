@@ -5,9 +5,18 @@ module SQLQueries
     SELECT COUNT(*) FROM artists;
   SQL
 
+  COUNT_USERS = <<-SQL
+    SELECT COUNT(*) FROM users
+  SQL
+
+  ORDER_USER_RECORD = <<-SQL
+    SELECT * FROM users
+    ORDER BY created_at DESC
+  SQL
+
   ORDER_ARTIST_RECORD = <<-SQL
     SELECT * FROM artists
-    ORDER BY id
+    ORDER BY creted_at DESC
   SQL
 
   CREATE_ARTIST_SQL = <<-SQL

@@ -43,4 +43,13 @@ class User < ApplicationRecord
       artist&.destroy
     end
   end
+
+  def self.build_user_object_from_json(result)
+    users = []
+    result.each do |user|
+      users << User.new(user)
+    end
+
+    users
+  end
 end
