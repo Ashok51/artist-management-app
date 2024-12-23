@@ -144,6 +144,22 @@ module ArtistMusicSqlHandler
     execute_sql(sql_query)
   end
 
+  def delete_artist_and_associated_musics
+    artist_id = params[:id]
+    delete_all_musics(artist_id)
+    delete_artist(artist_id)
+  end
+
+  def delete_all_musics(artist_id)
+    sql_query = SQLQueries::DELETE_ALL_ARTIST_MUSICS.call(artist_id)
+    execute_sql(sql_query)
+  end
+
+  def delete_artist(artist_id)
+    sql_to_delete_artist = SQLQueries::DELETE_SPECIFIC_ARTIST.call(artist_id)
+    execute_sql(sql_to_delete_artist)
+  end
+
   def sanitize_and_execute_sql(field_values_with_query)
     sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, field_values_with_query)
     execute_sql(sanitized_sql)

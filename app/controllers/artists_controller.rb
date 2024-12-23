@@ -64,13 +64,12 @@ class ArtistsController < ApplicationController
   end
 
   def destroy
-    authorize @artist
-
-    if @artist.destroy
-      redirect_to artists_path, notice: 'Artist was successfully deleted.'
-    else
-      redirect_to artists_path, alert: 'Failed to delete an Artist. Please try again.'
+    ActiveRecord::Base.transaction do
+      delete_artist_and_associated_musics
     end
+    redirect_to artists_url, notice: 'Artist deleted successfully.'
+  rescue ActiveRecord::StatementInvalid => e
+    flash[:alert] = 'Unable to delete artist and musics. Please try again.'
   end
 
   def export

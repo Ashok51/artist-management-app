@@ -35,4 +35,12 @@ module SQLQueries
   BULK_MUSIC_DELETE = lambda do |music_ids|
     "DELETE FROM musics WHERE id IN (#{music_ids})"
   end
+
+  DELETE_SPECIFIC_ARTIST = lambda do |artist_id|
+    "DELETE FROM artists WHERE id = #{artist_id}"
+  end
+
+  DELETE_ALL_ARTIST_MUSICS = lambda do |artist_id|
+    "DELETE FROM musics WHERE artist_id = #{artist_id}"
+  end
 end
