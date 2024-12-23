@@ -1,32 +1,55 @@
 # frozen_string_literal: true
 
 class CsvImportService
+  extend DatabaseExecution
+
   def self.import_artists_and_musics(file)
-    raise ArgumentError, 'Invalid file' if file.nil? || !file.content_type.include?('csv')
-
     CSV.foreach(file.path, headers: true) do |row|
-      artist_full_name = row['Full Name']
-      artist_date_of_birth = row['Date of Birth']
-      artist_gender = row['Gender']
-      artist_address = row['Address']
-      artist_first_released_year = row['First Released Year']
+      artist_attrs = row.to_h.slice('Full Name', 'Date of Birth', 'Address', 'First Released Year', 'Gender')
 
-      artist = Artist.find_or_create_by(full_name: artist_full_name) do |a|
-        a.date_of_birth = artist_date_of_birth
-        a.gender = artist_gender
-        a.address = artist_address
-        a.first_released_year = artist_first_released_year
-      end
+      artist_values = artist_attrs.values.map { |value| sanitize_and_quote(value) }.join(', ')
 
-      music_title = row['Music Title']
-      album_name = row['Album']
-      genre = row['Genre']
+      result = create_artist_from_csv(artist_values)
 
-      artist.musics.find_or_create_by!(
-        title: music_title,
-        album_name: album_name,
-        genre: genre
-      )
+      artist_id = result[0]['id']
+
+      music_attrs = row.to_h.slice('Music Title', 'Album', 'Genre')
+
+      music_attrs['Genre'] = map_genre_to_integer(music_attrs['Genre'])
+
+      music_values = music_attrs.values.map { |value| sanitize_and_quote(value) }.join(', ')
+
+      create_music_from_csv(music_values, artist_id) if music_values.present?
     end
+  end
+
+  def self.create_artist_from_csv(artist_values)
+    artist_sql = SQLQueries::CREATE_ARTIST_FROM_CSV.call(artist_values)
+
+    execute_sql(artist_sql)
+  end
+
+  def self.create_music_from_csv(music_values, artist_id)
+    music_sql = SQLQueries::CREATE_MUSIC_FROM_CSV.call(music_values, artist_id)
+    execute_sql(music_sql)
+  end
+
+  def self.map_genre_to_integer(genre_string)
+    case genre_string&.downcase
+    when 'pop'
+      0
+    when 'country'
+      1
+    when 'classic'
+      2
+    when 'rock'
+      3
+    when 'jazz'
+      4
+    end
+  end
+
+  def self.sanitize_and_quote(value)
+    ActiveRecord::Base.connection.quote(value)
   end
 end

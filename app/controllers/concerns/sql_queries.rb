@@ -49,4 +49,19 @@ module SQLQueries
     FROM artists
     LEFT JOIN musics ON artists.id = musics.artist_id
   SQL
+
+  CREATE_ARTIST_FROM_CSV = lambda do |artist_values|
+    "INSERT INTO artists (full_name, date_of_birth, address, first_released_year, gender, created_at, updated_at)
+    VALUES (#{artist_values}, NOW(), NOW())
+    ON CONFLICT (full_name) DO UPDATE SET
+      first_released_year = EXCLUDED.first_released_year,
+      gender = EXCLUDED.gender,
+      updated_at = NOW()
+    RETURNING id"
+  end
+
+  CREATE_MUSIC_FROM_CSV = lambda do |music_values, artist_id|
+    "INSERT INTO musics (title, album_name, genre, artist_id, created_at, updated_at)
+     VALUES (#{music_values}, #{artist_id}, NOW(), NOW())"
+  end
 end
