@@ -43,4 +43,10 @@ module SQLQueries
   DELETE_ALL_ARTIST_MUSICS = lambda do |artist_id|
     "DELETE FROM musics WHERE artist_id = #{artist_id}"
   end
+
+  FETCH_ARTISTS_WITH_MUSIC = <<-SQL
+    SELECT artists.*, musics.title AS title, musics.album_name AS album_name, musics.genre AS genre
+    FROM artists
+    LEFT JOIN musics ON artists.id = musics.artist_id
+  SQL
 end

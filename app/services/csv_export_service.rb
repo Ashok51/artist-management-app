@@ -1,29 +1,57 @@
 # frozen_string_literal: true
 
 class CsvExportService
+  extend DatabaseExecution
 
   def self.export_artists_and_musics
-    artists = Artist.includes(:musics).all
+    artists_with_musics = []
+
+    artists_with_musics_data = fetch_artists_with_music
+
+    artists_with_musics_data.each do |row|
+      artist = {
+        'id' => row['id'],
+        'name' => row['full_name'],
+        'date_of_birth' => row['date_of_birth'],
+        'address' => row['address'],
+        'first_release_year' => row['first_released_year'],
+        'gender' => row['gender'],
+        'no_of_albums_released' => row['no_of_albums_released'],
+        'music_title' => row['title'],
+        'music_album_name' => row['album_name'],
+        'music_genre' => row['genre']
+      }
+
+      artists_with_musics << artist
+    end
 
     CSV.generate(headers: true) do |csv|
-      csv << ['Full Name', 'Date of Birth', 'Gender', 'Address', 'First Released Year', 'No of Albums Released',
-              'Music Title', 'Album', 'Genre']
-
-      artists.each do |artist|
-        artist.musics.each do |music|
-          csv << [
-            artist.full_name,
-            artist.date_of_birth,
-            artist.gender,
-            artist.address,
-            artist.first_released_year,
-            artist.no_of_albums_released,
-            music.title,
-            music.album_name,
-            music.genre
-          ]
-        end
+      csv << ['ID', 'Full Name', 'Date of Birth', 'Address', 'First Released Year', 'Gender', 'No of Albums Released',
+                'Music Title', 'Album', 'Genre']
+      artists_with_musics.each do |artist|
+        csv << [artist['id'], artist['name'], artist['date_of_birth'], artist['address'], artist['first_release_year'],
+                artist['gender'], artist['no_of_albums_released'], artist['music_title'], artist['music_album_name'], map_genre_to_string(artist['music_genre'])]
       end
     end
+  end
+
+  def self.map_genre_to_string(gender_enum)
+    case gender_enum
+    when 0
+      'pop'
+    when 1
+      'country'
+    when 2
+      'classic'
+    when 3
+      'rock'
+    else
+      'jazz'
+    end
+  end
+
+  def self.fetch_artists_with_music
+    artists_query = SQLQueries::FETCH_ARTISTS_WITH_MUSIC
+    execute_sql(artists_query)
   end
 end
