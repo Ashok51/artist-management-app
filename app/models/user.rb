@@ -26,11 +26,34 @@ class User < ApplicationRecord
   def create_artist_record_if_needed
     return unless artist?
 
-    create_artist!(
-      full_name: full_name,
-      date_of_birth: date_of_birth,
-      gender: gender,
-      address: address
+    sql = <<-SQL
+      INSERT INTO artists (full_name, date_of_birth, gender, address, user_id, created_at, updated_at, first_released_year, no_of_albums_released)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id;
+    SQL
+
+    values = [
+      full_name,
+      date_of_birth,
+      gender,
+      address,
+      id,
+      Time.current,
+      Time.current,
+      nil,
+      nil
+    ]
+
+    result = ActiveRecord::Base.send(:sanitize_sql_array, [sql, *values])
+    ActiveRecord::Base.connection.execute(result)
+  end
+
+  def delete_artist
+    sql = <<-SQL
+      DELETE FROM artists WHERE user_id = ?
+    SQL
+
+    ActiveRecord::Base.connection.execute(
+      ActiveRecord::Base.send(:sanitize_sql_array, [sql, id])
     )
   end
 
@@ -40,7 +63,7 @@ class User < ApplicationRecord
     if role == 'artist'
       create_artist_record_if_needed
     elsif role_was == 'artist' && role != 'artist'
-      artist&.destroy
+      delete_artist
     end
   end
 end
