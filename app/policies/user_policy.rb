@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class UserPolicy < ApplicationPolicy
-  attr_reader :user, :record
 
-  def initialize(user, record)
-    @user = user
-    @record = record
+  def index?
+    user.super_admin?
   end
 
   def create?
@@ -22,15 +20,5 @@ class UserPolicy < ApplicationPolicy
 
   def destroy?
     create?
-  end
-
-  class Scope < Scope
-    def resolve
-      if user.super_admin?
-        scope.all
-      else
-        scope.none
-      end
-    end
   end
 end

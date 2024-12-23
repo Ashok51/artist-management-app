@@ -1,18 +1,18 @@
 <div class="col-md-6">
   <div class="mb-3">
     <%= f.label :gender, class: "form-label" %>
-    <%= f.select :gender, humanized_gender_names, { prompt: 'Select Gender' }, class: "form-select", required: true %>
+    <%= f.select :gender, humanized_gender_names, { prompt: 'Select Gender' }, class: "form-select form-select-sm", required: true %>
   </div>
   <div class="mb-3">
     <%= f.label :phone, class: "form-label" %>
-    <%= f.text_field :phone, class: "form-control", required: true %>
+    <%= f.text_field :phone, class: "form-control form-control-sm", required: true %>
   </div>
   <div class="mb-3">
     <%= f.label :date_of_birth, class: "form-label" %>
-    <%= f.date_field :date_of_birth, class: "form-control", required: true %>
+    <%= f.date_field :date_of_birth, class: "form-control form-control-sm", required: true, max: Date.today %>
   </div>
   <div class="mb-3">
     <%= f.label :address, class: "form-label" %>
-    <%= f.text_area :address, class: "form-control", required: true, rows: 3 %>
+    <%= f.text_area :address, class: "form-control form-control-sm", required: true, rows: 3 %>
   </div>
 </div>

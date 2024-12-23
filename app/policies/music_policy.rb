@@ -3,11 +3,11 @@
 class MusicPolicy < ApplicationPolicy
 
   def index?
-    user&.artist
+    user&.artist?
   end
 
   def new?
-    user&.artist
+    user&.artist?
   end
 
   def edit?

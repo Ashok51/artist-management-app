@@ -4,8 +4,8 @@
     data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper'}) do |form| %>
     <%= render "artist_and_music_fields", form: form %>
     <div class="row mb-3">
-      <div class="col-md-10 offset-md-4">
-        <%= form.submit "Create", class: "btn btn-primary" %>
+      <div class="col-md-10">
+        <%= form.submit "Create", class: "btn btn-primary btn-lg offset-6" %>
       </div>
     </div>
 

@@ -10,12 +10,12 @@ module Admin
     include SQLQueries
 
     def index
+      authorize User, :index?
+        
       per_page = 5
       @total_pages = total_page_of_user_table(per_page)
 
       @users = paginate_users(per_page)
-
-      policy_scope(User)
     end
 
     def new
