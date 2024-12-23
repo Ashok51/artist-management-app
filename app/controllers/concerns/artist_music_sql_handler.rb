@@ -160,6 +160,69 @@ module ArtistMusicSqlHandler
     execute_sql(sql_to_delete_artist)
   end
 
+  def create_music(artist_id, music_params)
+    music_column_values = [
+      music_params[:title],
+      music_params[:album_name],
+      map_genre_to_integer(music_params[:genre]),
+      artist_id,
+      Time.current,
+      Time.current
+    ]
+
+    music_sql = SQLQueries::CREATE_MUSIC_SQL
+
+    execute_sql(ActiveRecord::Base.send(:sanitize_sql_array, [music_sql, *music_column_values]))
+  end
+
+  def update_music(music_id, music_params)
+    music_column_values = [
+      music_params[:title],
+      music_params[:album_name],
+      map_genre_to_integer(music_params[:genre]),
+      Time.current, # updated_at
+      music_id
+    ]
+
+    music_sql = SQLQueries::UPDATE_MUSIC_SQL
+
+    result = execute_sql(ActiveRecord::Base.send(:sanitize_sql_array, [music_sql, *music_column_values]))
+    result.cmd_tuples.positive?
+  end
+
+  def delete_music(music_id)
+    music_sql = SQLQueries::DELETE_MUSIC_SQL
+
+    result = execute_sql(ActiveRecord::Base.send(:sanitize_sql_array, [music_sql, music_id]))
+    result.cmd_tuples.positive?
+  end
+
+  def find_music_by_id(id)
+    sql = SQLQueries::FIND_MUSIC_BY_ID_SQL
+
+    result = execute_sql(ActiveRecord::Base.send(:sanitize_sql_array, [sql, id]))
+    record = result.to_a.first
+
+    return nil unless record
+
+    Music.instantiate(record)
+  end
+
+  def map_genre_to_integer(genre_string)
+    case genre_string&.downcase
+    when 'pop'
+      0
+    when 'country'
+      1
+    when 'classic'
+      2
+    when 'rock'
+      3
+    when 'jazz'
+      4
+    end
+  end
+
   def sanitize_and_execute_sql(field_values_with_query)
     sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, field_values_with_query)
     execute_sql(sanitized_sql)

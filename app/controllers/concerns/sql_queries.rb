@@ -17,8 +17,27 @@ module SQLQueries
   SQL
 
   CREATE_MUSIC_SQL = <<-SQL
-    INSERT INTO musics (title, genre, release_date, artist_id, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?);
+    INSERT INTO musics (title, album_name, genre, artist_id, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    RETURNING id;
+  SQL
+
+  UPDATE_MUSIC_SQL = <<-SQL.freeze
+    UPDATE musics
+    SET title = ?,#{' '}
+        album_name = ?,#{' '}
+        genre = ?,#{' '}
+        updated_at = ?
+    WHERE id = ?;
+  SQL
+
+  DELETE_MUSIC_SQL = <<-SQL
+    DELETE FROM musics
+    WHERE id = ?;
+  SQL
+
+  FIND_MUSIC_BY_ID_SQL = <<-SQL
+    SELECT * FROM musics WHERE id = ? LIMIT 1;
   SQL
 
   CREATE_BULK_MUSIC = lambda do |placeholders|
