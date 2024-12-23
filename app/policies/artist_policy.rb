@@ -32,14 +32,4 @@ class ArtistPolicy < ApplicationPolicy
   def import?
     export?
   end
-
-  class Scope < Scope
-    def resolve
-      if user.super_admin? || user.artist_manager?
-        scope.all # Artist managers and super admin  can see all artists
-      else
-        scope.none
-      end
-    end
-  end
 end

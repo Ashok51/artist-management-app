@@ -12,11 +12,11 @@ class ArtistsController < ApplicationController
   include ArtistMusicSqlHandler
 
   def index
+    authorize Artist, :index?
+
     per_page = 5
     @total_pages = total_page_of_artist_table(per_page)
     @artists = paginate_artists(per_page)
-
-    policy_scope(Artist)
   end
 
   def new
@@ -85,14 +85,13 @@ class ArtistsController < ApplicationController
 
     authorize :artist, :import?
 
-    begin
+    ActiveRecord::Base.transaction do
       CsvImportService.import_artists_and_musics(file)
-      redirect_to artists_path, notice: 'Artists and Musics were successfully imported.'
-    rescue ArgumentError => e
-      redirect_to artists_path, alert: e.message
-    rescue StandardError => e
-      redirect_to artists_path, alert: "An error occurred: #{e.message}"
     end
+      redirect_to artists_path, notice: 'Artists and Musics were successfully imported.'
+  rescue  ActiveRecord::StatementInvalid
+      redirect_to artists_path
+      flash[:alert] = 'Unable to update artist. Please try again.'
   end
 
   private

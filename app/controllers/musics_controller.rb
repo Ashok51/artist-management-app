@@ -8,8 +8,9 @@ class MusicsController < ApplicationController
   include DatabaseExecution
 
   def index
-    @musics = policy_scope(Music)
-    authorize @musics
+    authorize Music, :index?
+
+    @musics = current_user&.artist&.musics
   end
 
   def new
@@ -44,7 +45,7 @@ class MusicsController < ApplicationController
     authorize @music
 
     ActiveRecord::Base.transaction do
-      success = update_music(@music.id, music_params)
+      success = update_music_single(@music.id, music_params)
 
       raise ActiveRecord::Rollback, 'Music update failed' unless success
 

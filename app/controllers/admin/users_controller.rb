@@ -3,9 +3,19 @@
 module Admin
   class UsersController < ApplicationController
     before_action :set_user, only: %i[edit update destroy]
+    require_relative './../concerns/sql_queries'
+    before_action :set_page_number, only: %i[index]
+    include DatabaseExecution
+
+    include SQLQueries
 
     def index
-      @users = policy_scope(User)
+      authorize User, :index?
+        
+      per_page = 5
+      @total_pages = total_page_of_user_table(per_page)
+
+      @users = paginate_users(per_page)
     end
 
     def new
@@ -69,6 +79,25 @@ module Admin
       @user = User.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       redirect_to admin_users_path, alert: 'User not found.'
+    end
+
+    def total_page_of_user_table(per_page)
+      query = SQLQueries::COUNT_USERS
+  
+      total_count = execute_sql(query).first['count'].to_i
+  
+      (total_count.to_f / per_page).ceil
+    end
+  
+    def paginate_users(per_page)
+      query = SQLQueries::ORDER_USER_RECORD
+      result = Pagination.paginate(query, @page_number, per_page)
+
+      User.build_user_object_from_json(result)
+    end
+
+    def set_page_number
+      @page_number = params[:page].to_i || 1
     end
   end
 end

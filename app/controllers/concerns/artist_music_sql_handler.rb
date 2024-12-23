@@ -175,7 +175,7 @@ module ArtistMusicSqlHandler
     execute_sql(ActiveRecord::Base.send(:sanitize_sql_array, [music_sql, *music_column_values]))
   end
 
-  def update_music(music_id, music_params)
+  def update_music_single(music_id, music_params)
     music_column_values = [
       music_params[:title],
       music_params[:album_name],
