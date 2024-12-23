@@ -3,12 +3,18 @@
 class ArtistsController < ApplicationController
   before_action :set_artist, only: %i[show edit update destroy]
   before_action :set_artist_for_export, only: %i[export]
+  before_action :set_page_number, only: %i[index]
 
   require 'csv'
+  require_relative './concerns/sql_queries'
+  include DatabaseExecution
 
   def index
-    @artists = Artist.page(params[:page])
-    authorize @artists
+    per_page = 5
+    @total_pages = total_page_of_artist_table(per_page)
+    @artists = paginate_artists(per_page)
+
+    policy_scope(Artist)
   end
 
   def new
@@ -63,11 +69,16 @@ class ArtistsController < ApplicationController
   def export
     csv_data = CsvExportService.export_artists_and_musics
 
+    authorize :artist, :export?
+
     send_data csv_data, filename: "artists_and_musics-#{Date.today}.csv", type: 'text/csv'
   end
 
   def import
     file = params[:file]
+
+    authorize :artist, :import?
+
     begin
       CsvImportService.import_artists_and_musics(file)
       redirect_to artists_path, notice: 'Artists and Musics were successfully imported.'
@@ -92,5 +103,23 @@ class ArtistsController < ApplicationController
 
   def set_artist_for_export
     @artists = Artist.includes(:musics).all
+  end
+
+  def total_page_of_artist_table(per_page)
+    query = SQLQueries::COUNT_ARTISTS
+
+    total_count = execute_sql(query).first['count'].to_i
+
+    (total_count.to_f / per_page).ceil
+  end
+
+  def paginate_artists(per_page)
+    query = SQLQueries::ORDER_ARTIST_RECORD
+    result = Pagination.paginate(query, @page_number, per_page)
+    Artist.build_artist_object_from_json(result)
+  end
+
+  def set_page_number
+    @page_number = params[:page].to_i || 1
   end
 end
