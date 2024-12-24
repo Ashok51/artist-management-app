@@ -53,7 +53,7 @@ module ArtistMusicSqlHandler
     gender = Artist.genders[artist_params[:gender].to_sym]
 
     release_year = artist_params[:first_released_year].present? ?
-                                                        artist_params[:first_released_year] : nil
+                                                        artist_params[:first_released_year] : 0
 
     update_artist_sql = SQLQueries::UPDATE_ARTIST
 
