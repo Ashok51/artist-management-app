@@ -11,9 +11,8 @@ module Admin
 
     def index
       authorize User, :index?
-        
+
       per_page = 5
-      @total_pages = total_page_of_user_table(per_page)
 
       @users = paginate_users(per_page)
     end
@@ -54,7 +53,7 @@ module Admin
 
     def destroy
       authorize @user
-      
+
       if @user.destroy
         redirect_to admin_users_path, notice: 'User was successfully deleted.'
       else
@@ -83,15 +82,21 @@ module Admin
 
     def total_page_of_user_table(per_page)
       query = SQLQueries::COUNT_USERS
-  
+
       total_count = execute_sql(query).first['count'].to_i
-  
+
       (total_count.to_f / per_page).ceil
     end
-  
+
     def paginate_users(per_page)
-      query = SQLQueries::ORDER_USER_RECORD
-      result = Pagination.paginate(query, @page_number, per_page)
+      users_count_query = SQLQueries::COUNT_USERS
+      order_users_query = SQLQueries::ORDER_USER_RECORD
+
+      pagination = PaginationService.new(users_count_query, @page_number, per_page, order_users_query)
+
+      @total_pages = pagination.total_pages
+
+      result = pagination.paginate
 
       User.build_user_object_from_json(result)
     end

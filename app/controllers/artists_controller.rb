@@ -15,7 +15,7 @@ class ArtistsController < ApplicationController
     authorize Artist, :index?
 
     per_page = 5
-    @total_pages = total_page_of_artist_table(per_page)
+
     @artists = paginate_artists(per_page)
   end
 
@@ -68,7 +68,7 @@ class ArtistsController < ApplicationController
       delete_artist_and_associated_musics
     end
     redirect_to artists_url, notice: 'Artist deleted successfully.'
-  rescue ActiveRecord::StatementInvalid => e
+  rescue ActiveRecord::StatementInvalid
     flash[:alert] = 'Unable to delete artist and musics. Please try again.'
   end
 
@@ -83,15 +83,20 @@ class ArtistsController < ApplicationController
   def import
     file = params[:file]
 
+    if file.nil?
+      redirect_to artists_url, alert: 'Please upload any file.'
+      return
+    end
+
     authorize :artist, :import?
 
     ActiveRecord::Base.transaction do
       CsvImportService.import_artists_and_musics(file)
     end
-      redirect_to artists_path, notice: 'Artists and Musics were successfully imported.'
-  rescue  ActiveRecord::StatementInvalid
-      redirect_to artists_path
-      flash[:alert] = 'Unable to update artist. Please try again.'
+    redirect_to artists_path, notice: 'Artists and Musics were successfully imported.'
+  rescue ActiveRecord::StatementInvalid
+    redirect_to artists_path
+    flash[:alert] = 'Unable to update artist. Please try again.'
   end
 
   private
@@ -114,17 +119,16 @@ class ArtistsController < ApplicationController
     @artists = Artist.includes(:musics).all
   end
 
-  def total_page_of_artist_table(per_page)
-    query = SQLQueries::COUNT_ARTISTS
-
-    total_count = execute_sql(query).first['count'].to_i
-
-    (total_count.to_f / per_page).ceil
-  end
-
   def paginate_artists(per_page)
-    query = SQLQueries::ORDER_ARTIST_RECORD
-    result = Pagination.paginate(query, @page_number, per_page)
+    artist_count_query = SQLQueries::COUNT_ARTISTS
+    order_artist_query = SQLQueries::ORDER_ARTIST_RECORD
+
+    pagination = PaginationService.new(artist_count_query, @page_number, per_page, order_artist_query)
+
+    @total_pages = pagination.total_pages
+
+    result = pagination.paginate
+
     Artist.build_artist_object_from_json(result)
   end
 

@@ -45,7 +45,7 @@ class CsvExportService
       'classic'
     when 3
       'rock'
-    else
+    when 4
       'jazz'
     end
   end

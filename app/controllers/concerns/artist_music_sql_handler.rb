@@ -14,7 +14,7 @@ module ArtistMusicSqlHandler
       Time.current,
       Time.current
     ]
-
+    
     execute_sql(ActiveRecord::Base.send(:sanitize_sql_array, [artist_sql, *artist_column_values]))
   end
 
@@ -52,6 +52,9 @@ module ArtistMusicSqlHandler
 
     gender = Artist.genders[artist_params[:gender].to_sym]
 
+    release_year = artist_params[:first_released_year].present? ?
+                                                        artist_params[:first_released_year] : 0
+
     update_artist_sql = SQLQueries::UPDATE_ARTIST
 
     query_with_field_values = [
@@ -60,7 +63,7 @@ module ArtistMusicSqlHandler
       artist_params[:date_of_birth],
       gender,
       artist_params[:address],
-      artist_params[:first_released_year],
+      release_year,
       Time.current,
       artist_id
     ]

@@ -7,6 +7,8 @@ class CsvImportService
     CSV.foreach(file.path, headers: true) do |row|
       artist_attrs = row.to_h.slice('Full Name', 'Date of Birth', 'Address', 'First Released Year', 'Gender')
 
+      artist_attrs['Gender'] = artist_attrs['Gender'].capitalize
+
       artist_values = artist_attrs.values.map { |value| sanitize_and_quote(value) }.join(', ')
 
       result = create_artist_from_csv(artist_values)
@@ -14,6 +16,8 @@ class CsvImportService
       artist_id = result[0]['id']
 
       music_attrs = row.to_h.slice('Music Title', 'Album', 'Genre')
+
+      next if music_attrs&.values&.include?(nil)
 
       music_attrs['Genre'] = map_genre_to_integer(music_attrs['Genre'])
 
